@@ -126,7 +126,7 @@ export const BacktestModal = ({ product, isOpen, onClose }) => {
                 </h4>
                 {details.reportPdf && (
                   <a
-                    href={`${details.reportPdf}#toolbar=0&navpanes=0`}
+                    href={`${details.reportPdf}${details.reportPdf.includes('?') ? '&' : '?'}v=3#toolbar=0&navpanes=0`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#10B981]/15 hover:bg-[#10B981]/25 border border-[#10B981]/40 text-[#10B981] text-xs font-bold transition-all shadow-[0_0_10px_rgba(16,185,129,0.2)] hover:border-[#10B981] cursor-pointer"
