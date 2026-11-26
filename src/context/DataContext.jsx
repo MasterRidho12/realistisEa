@@ -243,13 +243,16 @@ export const DataProvider = ({ children }) => {
         .order('created_at', { ascending: true });
 
       if (prodErr) {
-        console.warn('Supabase products error (table may not exist yet):', prodErr.message);
+        console.warn('Supabase products error (table/permission may not be ready):', prodErr.message);
         setProducts(lsGetProducts());
-      } else if (prodRows.length === 0) {
-        await seedDefaults();
+        setDbReady(false);
       } else {
-        setProducts(prodRows.map(dbToProduct));
         setDbReady(true);
+        if (prodRows.length === 0) {
+          await seedDefaults();
+        } else {
+          setProducts(prodRows.map(dbToProduct));
+        }
       }
 
       const { data: settRows, error: settErr } = await supabase.from('settings').select('*');
@@ -300,7 +303,20 @@ export const DataProvider = ({ children }) => {
   useEffect(() => {
     loadData();
     subscribeRealtime();
-    return () => { if (channelRef.current && supabase) supabase.removeChannel(channelRef.current); };
+
+    const handleFocus = () => {
+      if (document.visibilityState === 'visible') {
+        loadData();
+      }
+    };
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleFocus);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleFocus);
+      if (channelRef.current && supabase) supabase.removeChannel(channelRef.current);
+    };
   }, [loadData, subscribeRealtime]);
 
   // ── Auth ──────────────────────────────────────────────────────────────────

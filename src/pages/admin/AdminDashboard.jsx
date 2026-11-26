@@ -32,6 +32,7 @@ export const AdminDashboard = () => {
   const { 
     products, 
     settings, 
+    dbReady,
     addProduct, 
     updateProduct, 
     deleteProduct, 
@@ -274,9 +275,11 @@ export const AdminDashboard = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0D1B16] border border-[#1E382E]">
-              <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
-              <span className="text-[11px] font-semibold text-gray-300">Sistem Online & Sinkron</span>
+            <div className={`hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0D1B16] border ${dbReady ? 'border-[#1E382E]' : 'border-amber-500/40'}`}>
+              <span className={`w-2 h-2 rounded-full animate-pulse ${dbReady ? 'bg-[#10B981]' : 'bg-amber-400'}`} />
+              <span className={`text-[11px] font-semibold ${dbReady ? 'text-gray-300' : 'text-amber-300'}`}>
+                {dbReady ? 'Cloud Sync: Aktif (Realtime)' : 'Mode Lokal (Cek Izin Tabel Supabase)'}
+              </span>
             </div>
 
             <Link
