@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, MessageCircle, BarChart3, Layers, Server, ShieldCheck, DollarSign } from 'lucide-react';
+import { Check, MessageCircle, BarChart3, Layers, Server, ShieldCheck, DollarSign, ExternalLink, Activity } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 
 export const EaCard = ({ product, onOpenBacktest }) => {
@@ -111,6 +111,20 @@ export const EaCard = ({ product, onOpenBacktest }) => {
           ))}
         </div>
       </div>
+
+      {/* MQL5 Live Signal Link (if available) */}
+      {(product.mql5Url || product.backtestDetails?.mql5Url) && (
+        <a
+          href={product.mql5Url || product.backtestDetails?.mql5Url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full flex items-center justify-center gap-2 bg-[#0B241A] hover:bg-[#10B981]/20 text-[#10B981] hover:text-emerald-300 border border-[#10B981]/40 hover:border-[#10B981] font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl transition-all duration-200 shadow-[0_0_12px_rgba(16,185,129,0.15)] mb-3 group/mql"
+        >
+          <Activity className="w-4 h-4 text-[#10B981] group-hover/mql:animate-pulse" />
+          <span>Live Signal MQL5</span>
+          <ExternalLink className="w-3.5 h-3.5 opacity-70 ml-0.5" />
+        </a>
+      )}
 
       {/* Two Action Buttons: Sewa Sekarang & Laporan Backtest */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#1E382E]">

@@ -38,6 +38,8 @@ export const DEFAULT_PRODUCTS = [
     image: '/images/ea-rgrowth.png',
     backtest_image: '/images/backtest-rgrowth.png',
     backtestImage: '/images/backtest-rgrowth.png',
+    mql5_url: 'https://www.mql5.com/en/signals/2388343?source=Site+Signals+My',
+    mql5Url: 'https://www.mql5.com/en/signals/2388343?source=Site+Signals+My',
     backtest_details: {
       period: '02.01.2015 - 08.01.2025 (10 Tahun - M30)',
       initialDeposit: '$1,000.00',
@@ -60,6 +62,7 @@ export const DEFAULT_PRODUCTS = [
       lossCount: '82 Losses',
       sqn: '10.78 (Holy Grail)',
       reportPdf: '/reports/RGrowth_Tickstory_2015-2025.pdf',
+      mql5Url: 'https://www.mql5.com/en/signals/2388343?source=Site+Signals+My',
       notes: 'Laporan resmi pengujian Every-Tick 99.90% Tickstory dengan Quant Analyzer periode 2015-2025. Menghasilkan profit bersih $3.020.878,36 dari deposit $1.000 dengan drawdown terkontrol 5.69% dan win rate 96.64% (2.362 Win dari 2.444 Transaksi). Tanpa Martingale, Grid, atau Averaging.',
     },
     backtestDetails: {
@@ -84,6 +87,7 @@ export const DEFAULT_PRODUCTS = [
       lossCount: '82 Losses',
       sqn: '10.78 (Holy Grail)',
       reportPdf: '/reports/RGrowth_Tickstory_2015-2025.pdf',
+      mql5Url: 'https://www.mql5.com/en/signals/2388343?source=Site+Signals+My',
       notes: 'Laporan resmi pengujian Every-Tick 99.90% Tickstory dengan Quant Analyzer periode 2015-2025. Menghasilkan profit bersih $3.020.878,36 dari deposit $1.000 dengan drawdown terkontrol 5.69% dan win rate 96.64% (2.362 Win dari 2.444 Transaksi). Tanpa Martingale, Grid, atau Averaging.',
     },
     active: true,
@@ -181,6 +185,7 @@ const dbToProduct = (row) => ({
   minDeposit: row.min_deposit,
   backtestImage: row.backtest_image,
   backtestDetails: row.backtest_details,
+  mql5Url: row.mql5_url || row.backtest_details?.mql5Url || '',
 });
 
 const productToDb = (p) => ({
@@ -199,7 +204,10 @@ const productToDb = (p) => ({
   image: p.image || '',
   backtest_image: p.backtestImage || p.backtest_image || '',
   features: Array.isArray(p.features) ? p.features : [],
-  backtest_details: p.backtestDetails || p.backtest_details || {},
+  backtest_details: {
+    ...(p.backtestDetails || p.backtest_details || {}),
+    mql5Url: p.mql5Url || p.mql5_url || p.backtestDetails?.mql5Url || p.backtest_details?.mql5Url || '',
+  },
   active: p.active !== undefined ? p.active : true,
 });
 
