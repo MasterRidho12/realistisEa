@@ -1,6 +1,6 @@
 import React from 'react';
 import { useData } from '../../context/DataContext';
-import { MessageCircle, AlertTriangle, ArrowUp, Headphones } from 'lucide-react';
+import { MessageCircle, AlertTriangle, ArrowUp, Headphones, ExternalLink } from 'lucide-react';
 
 export const Footer = () => {
   const { getWhatsAppLink, trackWaClick } = useData();
@@ -44,7 +44,7 @@ export const Footer = () => {
               Platform penyewaan robot trading (Expert Advisor) Forex & XAUUSD yang memprioritaskan keamanan modal dan manajemen risiko terukur 2% per trade.
             </p>
 
-            <div className="pt-1">
+            <div className="pt-1 flex flex-wrap items-center gap-2.5">
               <button
                 onClick={handleWaContact}
                 className="inline-flex items-center gap-2 bg-[#10B981] hover:bg-[#059669] text-[#06100C] font-bold text-xs px-4 py-2 rounded-full transition-all shadow-[0_0_12px_rgba(16,185,129,0.3)] cursor-pointer"
@@ -52,6 +52,29 @@ export const Footer = () => {
                 <MessageCircle className="w-3.5 h-3.5 fill-current" />
                 <span>Chat Admin WhatsApp</span>
               </button>
+              <a
+                href="https://www.instagram.com/rizkizuhri09?avpt=eWFzcWhyYmticHVh"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#0D1B16] hover:bg-[#132920] border border-[#1E382E] hover:border-pink-500/40 text-gray-200 hover:text-white font-semibold text-xs px-4 py-2 rounded-full transition-all"
+              >
+                <svg
+                  className="w-3.5 h-3.5 text-pink-400 shrink-0"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                </svg>
+                <span>@rizkizuhri09</span>
+                <ExternalLink className="w-3 h-3 text-gray-500" />
+              </a>
             </div>
           </div>
 
