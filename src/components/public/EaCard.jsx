@@ -1,9 +1,12 @@
 import React from 'react';
-import { Check, MessageCircle, BarChart3, Layers, Server, ShieldCheck, DollarSign, ExternalLink, Activity } from 'lucide-react';
+import { Check, MessageCircle, BarChart3, Layers, Server, ShieldCheck, DollarSign, ExternalLink, Activity, Clock } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 
 export const EaCard = ({ product, onOpenBacktest }) => {
   const { getWhatsAppLink, trackWaClick } = useData();
+  const isComingSoon = Boolean(
+    product.comingSoon || (product.badgeText || '').toLowerCase().includes('coming soon')
+  );
 
   const handleSewaClick = () => {
     trackWaClick(product.name);
@@ -126,24 +129,45 @@ export const EaCard = ({ product, onOpenBacktest }) => {
         </a>
       )}
 
-      {/* Two Action Buttons: Sewa Sekarang & Laporan Backtest */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#1E382E]">
-        <button
-          onClick={handleSewaClick}
-          className="w-full flex items-center justify-center gap-2 bg-[#10B981] hover:bg-[#059669] text-[#06100C] font-bold text-xs sm:text-sm py-3 px-4 rounded-xl transition-all duration-200 shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_20px_rgba(16,185,129,0.45)] cursor-pointer"
-        >
-          <MessageCircle className="w-4 h-4 fill-current" />
-          <span>Sewa Sekarang</span>
-        </button>
+      {/* Two Action Buttons: Coming Soon state vs Active state */}
+      {isComingSoon ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#1E382E]">
+          <button
+            type="button"
+            disabled
+            className="w-full flex items-center justify-center gap-2 bg-[#081410] text-purple-300/80 border border-purple-500/30 font-bold text-xs sm:text-sm py-3 px-4 rounded-xl cursor-not-allowed opacity-85"
+          >
+            <Clock className="w-4 h-4 text-purple-400" />
+            <span>Coming Soon</span>
+          </button>
 
-        <button
-          onClick={() => onOpenBacktest(product)}
-          className="w-full flex items-center justify-center gap-2 bg-[#0D1B16] hover:bg-[#13271F] text-gray-200 hover:text-white border border-[#1E382E] hover:border-[#10B981]/50 font-semibold text-xs sm:text-sm py-3 px-4 rounded-xl transition-all duration-200 cursor-pointer"
-        >
-          <BarChart3 className="w-4 h-4 text-emerald-400" />
-          <span>Laporan Backtest</span>
-        </button>
-      </div>
+          <button
+            onClick={handleSewaClick}
+            className="w-full flex items-center justify-center gap-2 bg-[#0D1B16] hover:bg-[#13271F] text-gray-200 hover:text-white border border-[#1E382E] hover:border-[#10B981]/50 font-semibold text-xs sm:text-sm py-3 px-4 rounded-xl transition-all duration-200 cursor-pointer"
+          >
+            <MessageCircle className="w-4 h-4 text-emerald-400" />
+            <span>Tanya Progres WA</span>
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#1E382E]">
+          <button
+            onClick={handleSewaClick}
+            className="w-full flex items-center justify-center gap-2 bg-[#10B981] hover:bg-[#059669] text-[#06100C] font-bold text-xs sm:text-sm py-3 px-4 rounded-xl transition-all duration-200 shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_20px_rgba(16,185,129,0.45)] cursor-pointer"
+          >
+            <MessageCircle className="w-4 h-4 fill-current" />
+            <span>Sewa Sekarang</span>
+          </button>
+
+          <button
+            onClick={() => onOpenBacktest(product)}
+            className="w-full flex items-center justify-center gap-2 bg-[#0D1B16] hover:bg-[#13271F] text-gray-200 hover:text-white border border-[#1E382E] hover:border-[#10B981]/50 font-semibold text-xs sm:text-sm py-3 px-4 rounded-xl transition-all duration-200 cursor-pointer"
+          >
+            <BarChart3 className="w-4 h-4 text-emerald-400" />
+            <span>Laporan Backtest</span>
+          </button>
+        </div>
+      )}
 
     </div>
   );
