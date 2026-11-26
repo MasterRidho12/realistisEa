@@ -1,33 +1,34 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { supabase } from '../lib/supabase';
 
 const DataContext = createContext();
 
-const STORAGE_KEY = 'realistisea_data_v2';
 const AUTH_KEY = 'realistisea_admin_auth_v2';
 
-const DEFAULT_PRODUCTS = [
+// ─── Default / Seed Data ────────────────────────────────────────────────────
+export const DEFAULT_PRODUCTS = [
   {
     id: 'ea-rgrowth',
     name: 'EA RGrowth (XAUUSD Breakout)',
     category: 'Breakout',
-    badgeText: 'RECOMMENDED',
-    badgeColor: 'gold', // 'gold', 'blue', 'emerald', 'purple'
-    rentalPrice: 'Rp 255.000 / bln (Min. 12 Bulan)',
-    minDuration: '12 Bulan',
-    vpsPrice: 'VPS Rp 1,2 jt / tahun',
-    targetProfit: '2-10%/bln',
-    maxRisk: '2% per trade',
-    minDeposit: '$100',
+    badge_text: 'RECOMMENDED',
+    badge_color: 'gold',
+    rental_price: 'Rp 255.000 / bln (Min. 12 Bulan)',
+    min_duration: '12 Bulan',
+    vps_price: 'VPS Rp 1,2 jt / tahun',
+    target_profit: '2-10%/bln',
+    max_risk: '2% per trade',
+    min_deposit: '$100',
     platform: 'MT4',
     features: [
       'Breakout Strategy',
       'Stop Loss / TP',
       'Trailing Stop Management',
-      'Data Backtest 2015-2025 (Tickstory)'
+      'Data Backtest 2015-2025 (Tickstory)',
     ],
     image: '/images/ea-rgrowth.png',
-    backtestImage: '/images/backtest-rgrowth.png',
-    backtestDetails: {
+    backtest_image: '/images/backtest-rgrowth.png',
+    backtest_details: {
       period: '2015 - 2025 (10 Tahun)',
       initialDeposit: '$100',
       netProfit: '$28,450.00 (+28,350%)',
@@ -36,7 +37,8 @@ const DEFAULT_PRODUCTS = [
       winRate: '78.4%',
       totalTrades: '2,840 trades',
       modelingQuality: '99.90% Everytick (Tickstory)',
-      notes: 'Pengujian Every Tick murni dengan spread riil dan slippage. Tanpa sistem Martingale, Averaging, ataupun Grid berisiko.'
+      notes:
+        'Pengujian Every Tick murni dengan spread riil dan slippage. Tanpa sistem Martingale, Averaging, ataupun Grid berisiko.',
     },
     active: true,
   },
@@ -44,23 +46,19 @@ const DEFAULT_PRODUCTS = [
     id: 'ea-trendflow',
     name: 'EA TrendFlow (EURUSD / GBPUSD)',
     category: 'Trend Following',
-    badgeText: 'Trend Following',
-    badgeColor: 'blue',
-    rentalPrice: 'Sewa Rp 200.000 / bln',
-    minDuration: '6 Bulan',
-    vpsPrice: 'VPS Rp 1,2 jt / tahun',
-    targetProfit: '3-8%/bln',
-    maxRisk: '2% per trade',
-    minDeposit: '$100',
+    badge_text: 'Trend Following',
+    badge_color: 'blue',
+    rental_price: 'Sewa Rp 200.000 / bln',
+    min_duration: '6 Bulan',
+    vps_price: 'VPS Rp 1,2 jt / tahun',
+    target_profit: '3-8%/bln',
+    max_risk: '2% per trade',
+    min_deposit: '$100',
     platform: 'MT4',
-    features: [
-      'Trend Following',
-      'Trailing Stop',
-      'Backtest 2015-2025'
-    ],
+    features: ['Trend Following', 'Trailing Stop', 'Backtest 2015-2025'],
     image: '/images/ea-trendflow.png',
-    backtestImage: '/images/backtest-trendflow.png',
-    backtestDetails: {
+    backtest_image: '/images/backtest-trendflow.png',
+    backtest_details: {
       period: '2015 - 2025 (10 Tahun)',
       initialDeposit: '$100',
       netProfit: '$18,200.00 (+18,100%)',
@@ -69,17 +67,19 @@ const DEFAULT_PRODUCTS = [
       winRate: '74.2%',
       totalTrades: '3,120 trades',
       modelingQuality: '99.90% Everytick (Tickstory)',
-      notes: 'Algoritma trend following multi-pair dengan trailing stop dinamis. Menghindari sideway market dengan volatility filter.'
+      notes:
+        'Algoritma trend following multi-pair dengan trailing stop dinamis. Menghindari sideway market dengan volatility filter.',
     },
     active: true,
-  }
+  },
 ];
 
-const DEFAULT_SETTINGS = {
+export const DEFAULT_SETTINGS = {
   hero: {
     headline1: 'OTOMATISASI TRADING',
     headlineHighlight: 'XAUUSD REALISTIS',
-    subheadline: 'Jalankan algoritma trading otomatis dengan manajemen risiko teruji 2% per trade untuk pertumbuhan akun jangka panjang.',
+    subheadline:
+      'Jalankan algoritma trading otomatis dengan manajemen risiko teruji 2% per trade untuk pertumbuhan akun jangka panjang.',
     systemStatus: 'System Status: Online',
     platformSupport: 'MT4 Supported',
     winrate: '78.4%',
@@ -89,7 +89,8 @@ const DEFAULT_SETTINGS = {
   },
   contact: {
     whatsappNumber: '6281234567890',
-    waMessageTemplate: 'Halo Admin RealistisEA, saya tertarik untuk sewa {ea_name} dengan paket {price}. Mohon info aktivasi dan bantuan setup MT4.',
+    waMessageTemplate:
+      'Halo Admin RealistisEA, saya tertarik untuk sewa {ea_name} dengan paket {price}. Mohon info aktivasi dan bantuan setup MT4.',
   },
   vps: {
     title: 'Layanan VPS Trading 24/7',
@@ -98,59 +99,190 @@ const DEFAULT_SETTINGS = {
       'Server Khusus Trading Uptime 99.99%',
       'Ultra Low Latency (<1ms ke Broker SG/London)',
       'Auto-Restart MT4 jika Server Mengalami Reboot',
-      'Full Setup & Monitoring oleh Tim Teknisi RealistisEA'
-    ]
+      'Full Setup & Monitoring oleh Tim Teknisi RealistisEA',
+    ],
   },
   stats: {
     waClicks: 148,
     pageViews: 2180,
-  }
+  },
 };
 
+// ─── Helper: map DB row (snake_case) ↔ app object ────────────────────────────
+// DB already uses snake_case, we keep it consistent.
+// Legacy camelCase fields are aliased for backward compat with existing components.
+const dbToProduct = (row) => ({
+  ...row,
+  // camelCase aliases for existing components
+  badgeText: row.badge_text,
+  badgeColor: row.badge_color,
+  rentalPrice: row.rental_price,
+  minDuration: row.min_duration,
+  vpsPrice: row.vps_price,
+  targetProfit: row.target_profit,
+  maxRisk: row.max_risk,
+  minDeposit: row.min_deposit,
+  backtestImage: row.backtest_image,
+  backtestDetails: row.backtest_details,
+});
+
+const productToDb = (p) => ({
+  id: p.id,
+  name: p.name,
+  category: p.category || '',
+  badge_text: p.badgeText || p.badge_text || '',
+  badge_color: p.badgeColor || p.badge_color || '',
+  rental_price: p.rentalPrice || p.rental_price || '',
+  min_duration: p.minDuration || p.min_duration || '',
+  vps_price: p.vpsPrice || p.vps_price || '',
+  target_profit: p.targetProfit || p.target_profit || '',
+  max_risk: p.maxRisk || p.max_risk || '',
+  min_deposit: p.minDeposit || p.min_deposit || '',
+  platform: p.platform || '',
+  image: p.image || '',
+  backtest_image: p.backtestImage || p.backtest_image || '',
+  features: Array.isArray(p.features) ? p.features : [],
+  backtest_details: p.backtestDetails || p.backtest_details || {},
+  active: p.active !== undefined ? p.active : true,
+});
+
+// ─── Provider ────────────────────────────────────────────────────────────────
 export const DataProvider = ({ children }) => {
-  const [products, setProducts] = useState(() => {
+  const [products, setProducts] = useState([]);
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [loading, setLoading] = useState(true);
+  const [dbReady, setDbReady] = useState(false); // true once we confirmed tables exist
+
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(
+    () => sessionStorage.getItem(AUTH_KEY) === 'true'
+  );
+
+  const channelRef = useRef(null);
+
+  // ── Initial load from Supabase ──────────────────────────────────────────
+  const loadFromSupabase = useCallback(async () => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY + '_products');
-      return saved ? JSON.parse(saved) : DEFAULT_PRODUCTS;
-    } catch (e) {
-      return DEFAULT_PRODUCTS;
-    }
-  });
+      // Load products
+      const { data: prodRows, error: prodErr } = await supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: true });
 
-  const [settings, setSettings] = useState(() => {
+      if (prodErr) {
+        // Table might not exist yet — use defaults, don't crash
+        console.warn('Products table not ready, using defaults:', prodErr.message);
+        setProducts(DEFAULT_PRODUCTS.map(dbToProduct));
+        setDbReady(false);
+      } else {
+        if (prodRows.length === 0) {
+          // Empty table — seed default data
+          await seedDefaults();
+        } else {
+          setProducts(prodRows.map(dbToProduct));
+          setDbReady(true);
+        }
+      }
+
+      // Load settings
+      const { data: settRows, error: settErr } = await supabase
+        .from('settings')
+        .select('*');
+
+      if (!settErr && settRows && settRows.length > 0) {
+        const merged = { ...DEFAULT_SETTINGS };
+        settRows.forEach((row) => {
+          merged[row.key] = { ...DEFAULT_SETTINGS[row.key], ...row.value };
+        });
+        setSettings(merged);
+        setDbReady(true);
+      }
+    } catch (err) {
+      console.error('Supabase load error:', err);
+      setProducts(DEFAULT_PRODUCTS.map(dbToProduct));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // ── Seed default data to Supabase ──────────────────────────────────────
+  const seedDefaults = async () => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY + '_settings');
-      return saved ? JSON.parse(saved) : DEFAULT_SETTINGS;
-    } catch (e) {
-      return DEFAULT_SETTINGS;
+      const rows = DEFAULT_PRODUCTS.map(productToDb);
+      const { error } = await supabase.from('products').insert(rows);
+      if (!error) {
+        setProducts(DEFAULT_PRODUCTS.map(dbToProduct));
+
+        // Seed settings
+        const settingEntries = Object.entries(DEFAULT_SETTINGS).map(([key, value]) => ({
+          key,
+          value,
+          updated_at: new Date().toISOString(),
+        }));
+        await supabase.from('settings').upsert(settingEntries, { onConflict: 'key' });
+        setDbReady(true);
+      }
+    } catch (err) {
+      console.error('Seed error:', err);
     }
-  });
+  };
 
-  // Auth in sessionStorage
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
-    return sessionStorage.getItem(AUTH_KEY) === 'true';
-  });
+  // ── Subscribe to Realtime changes ───────────────────────────────────────
+  const subscribeRealtime = useCallback(() => {
+    // Clean up any existing channel
+    if (channelRef.current) {
+      supabase.removeChannel(channelRef.current);
+    }
 
-  // Sync to localStorage
+    channelRef.current = supabase
+      .channel('realtime-realistisea')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'products' },
+        async () => {
+          // Re-fetch full product list on any change
+          const { data, error } = await supabase
+            .from('products')
+            .select('*')
+            .order('created_at', { ascending: true });
+          if (!error && data) {
+            setProducts(data.map(dbToProduct));
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'settings' },
+        async () => {
+          const { data, error } = await supabase.from('settings').select('*');
+          if (!error && data && data.length > 0) {
+            const merged = { ...DEFAULT_SETTINGS };
+            data.forEach((row) => {
+              merged[row.key] = { ...DEFAULT_SETTINGS[row.key], ...row.value };
+            });
+            setSettings(merged);
+          }
+        }
+      )
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Realtime connected — changes will sync instantly across all devices');
+        }
+      });
+  }, []);
+
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY + '_products', JSON.stringify(products));
-    } catch (e) {
-      console.error('Failed to save products to localStorage', e);
-    }
-  }, [products]);
+    loadFromSupabase();
+    subscribeRealtime();
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY + '_settings', JSON.stringify(settings));
-    } catch (e) {
-      console.error('Failed to save settings to localStorage', e);
-    }
-  }, [settings]);
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+      }
+    };
+  }, [loadFromSupabase, subscribeRealtime]);
 
-  // Auth Login / Logout
+  // ── Auth ─────────────────────────────────────────────────────────────────
   const loginAdmin = (username, password) => {
-    // Accepts username 'admin' (or any username) with password 'admin123'
     if (password === 'admin123') {
       setIsAdminLoggedIn(true);
       sessionStorage.setItem(AUTH_KEY, 'true');
@@ -166,86 +298,141 @@ export const DataProvider = ({ children }) => {
     sessionStorage.removeItem(AUTH_KEY + '_user');
   };
 
-  // Product CRUD
-  const addProduct = (newProduct) => {
+  // ── Product CRUD (Supabase) ───────────────────────────────────────────────
+  const addProduct = async (newProduct) => {
     const id = newProduct.id || 'ea-' + Date.now();
-    const product = { ...newProduct, id };
-    setProducts(prev => [product, ...prev]);
-    return product;
-  };
+    const row = productToDb({ ...newProduct, id });
 
-  const updateProduct = (id, updatedFields) => {
-    setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updatedFields } : p));
-  };
-
-  const deleteProduct = (id) => {
-    setProducts(prev => prev.filter(p => p.id !== id));
-  };
-
-  // Update Settings
-  const updateSettings = (updatedSettings) => {
-    setSettings(prev => ({
-      ...prev,
-      ...updatedSettings,
-      hero: { ...prev.hero, ...(updatedSettings.hero || {}) },
-      contact: { ...prev.contact, ...(updatedSettings.contact || {}) },
-      vps: { ...prev.vps, ...(updatedSettings.vps || {}) },
-      stats: { ...prev.stats, ...(updatedSettings.stats || {}) },
-    }));
-  };
-
-  // Click tracker
-  const trackWaClick = (eaName = 'General') => {
-    setSettings(prev => ({
-      ...prev,
-      stats: {
-        ...prev.stats,
-        waClicks: (prev.stats?.waClicks || 0) + 1
+    if (dbReady) {
+      const { error } = await supabase.from('products').insert([row]);
+      if (error) {
+        console.error('addProduct error:', error);
+        // Optimistic fallback
+        setProducts((prev) => [dbToProduct(row), ...prev]);
       }
-    }));
+      // Realtime will update state automatically
+    } else {
+      // DB not ready — update local state only
+      setProducts((prev) => [dbToProduct(row), ...prev]);
+    }
+    return dbToProduct(row);
   };
 
-  // Helper for WhatsApp link
+  const updateProduct = async (id, updatedFields) => {
+    const existing = products.find((p) => p.id === id) || {};
+    const merged = { ...existing, ...updatedFields };
+    const row = productToDb(merged);
+
+    if (dbReady) {
+      const { error } = await supabase.from('products').update(row).eq('id', id);
+      if (error) {
+        console.error('updateProduct error:', error);
+        setProducts((prev) => prev.map((p) => (p.id === id ? dbToProduct(row) : p)));
+      }
+      // Realtime updates state
+    } else {
+      setProducts((prev) => prev.map((p) => (p.id === id ? dbToProduct(row) : p)));
+    }
+  };
+
+  const deleteProduct = async (id) => {
+    if (dbReady) {
+      const { error } = await supabase.from('products').delete().eq('id', id);
+      if (error) {
+        console.error('deleteProduct error:', error);
+        setProducts((prev) => prev.filter((p) => p.id !== id));
+      }
+      // Realtime updates state
+    } else {
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+    }
+  };
+
+  // ── Settings CRUD ────────────────────────────────────────────────────────
+  const updateSettings = async (updatedSettings) => {
+    const merged = {
+      ...settings,
+      ...updatedSettings,
+      hero: { ...settings.hero, ...(updatedSettings.hero || {}) },
+      contact: { ...settings.contact, ...(updatedSettings.contact || {}) },
+      vps: { ...settings.vps, ...(updatedSettings.vps || {}) },
+      stats: { ...settings.stats, ...(updatedSettings.stats || {}) },
+    };
+    setSettings(merged); // Optimistic update
+
+    if (dbReady) {
+      const entries = Object.entries(merged)
+        .filter(([k]) => ['hero', 'contact', 'vps', 'stats'].includes(k))
+        .map(([key, value]) => ({ key, value, updated_at: new Date().toISOString() }));
+
+      const { error } = await supabase
+        .from('settings')
+        .upsert(entries, { onConflict: 'key' });
+      if (error) console.error('updateSettings error:', error);
+    }
+  };
+
+  // ── WA Click Tracker ─────────────────────────────────────────────────────
+  const trackWaClick = async () => {
+    const newCount = (settings.stats?.waClicks || 0) + 1;
+    await updateSettings({ stats: { ...settings.stats, waClicks: newCount } });
+  };
+
+  // ── WhatsApp Link Helper ─────────────────────────────────────────────────
   const getWhatsAppLink = (product = null) => {
     const phone = settings.contact?.whatsappNumber || '6281234567890';
-    let text = settings.contact?.waMessageTemplate || 'Halo Admin RealistisEA, saya tertarik menyewa EA.';
+    let text =
+      settings.contact?.waMessageTemplate ||
+      'Halo Admin RealistisEA, saya tertarik menyewa EA.';
     if (product) {
       text = text
         .replace('{ea_name}', product.name)
-        .replace('{price}', product.rentalPrice);
+        .replace('{price}', product.rentalPrice || product.rental_price || '');
     } else {
-      text = text
-        .replace('{ea_name}', 'EA RealistisEA')
-        .replace('{price}', 'Paket Pilihan');
+      text = text.replace('{ea_name}', 'EA RealistisEA').replace('{price}', 'Paket Pilihan');
     }
     return `https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(text)}`;
   };
 
-  // Reset Data to Default
-  const resetToDefault = () => {
-    setProducts(DEFAULT_PRODUCTS);
+  // ── Reset to Default ─────────────────────────────────────────────────────
+  const resetToDefault = async () => {
+    if (dbReady) {
+      // Delete all then re-seed
+      await supabase.from('products').delete().neq('id', '___none___');
+      await seedDefaults();
+
+      const settingEntries = Object.entries(DEFAULT_SETTINGS).map(([key, value]) => ({
+        key,
+        value,
+        updated_at: new Date().toISOString(),
+      }));
+      await supabase.from('settings').upsert(settingEntries, { onConflict: 'key' });
+    }
+    setProducts(DEFAULT_PRODUCTS.map(dbToProduct));
     setSettings(DEFAULT_SETTINGS);
-    localStorage.removeItem(STORAGE_KEY + '_products');
-    localStorage.removeItem(STORAGE_KEY + '_settings');
   };
 
   return (
-    <DataContext.Provider value={{
-      products,
-      settings,
-      isAdminLoggedIn,
-      loginAdmin,
-      logoutAdmin,
-      addProduct,
-      updateProduct,
-      deleteProduct,
-      updateSettings,
-      trackWaClick,
-      getWhatsAppLink,
-      resetToDefault,
-      DEFAULT_PRODUCTS,
-      DEFAULT_SETTINGS,
-    }}>
+    <DataContext.Provider
+      value={{
+        products,
+        settings,
+        loading,
+        dbReady,
+        isAdminLoggedIn,
+        loginAdmin,
+        logoutAdmin,
+        addProduct,
+        updateProduct,
+        deleteProduct,
+        updateSettings,
+        trackWaClick,
+        getWhatsAppLink,
+        resetToDefault,
+        DEFAULT_PRODUCTS,
+        DEFAULT_SETTINGS,
+      }}
+    >
       {children}
     </DataContext.Provider>
   );
@@ -253,8 +440,6 @@ export const DataProvider = ({ children }) => {
 
 export const useData = () => {
   const context = useContext(DataContext);
-  if (!context) {
-    throw new Error('useData must be used within a DataProvider');
-  }
+  if (!context) throw new Error('useData must be used within a DataProvider');
   return context;
 };
