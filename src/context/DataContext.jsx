@@ -4,7 +4,7 @@ import { supabase, supabaseConfigured } from '../lib/supabase';
 const DataContext = createContext();
 
 const AUTH_KEY = 'realistisea_admin_auth_v2';
-const STORAGE_KEY = 'realistisea_data_v2';
+const STORAGE_KEY = 'realistisea_data_v3';
 
 // ─── Default / Seed Data ────────────────────────────────────────────────────
 export const DEFAULT_PRODUCTS = [
