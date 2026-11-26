@@ -28,7 +28,7 @@ export const BuktiBacktestSection = () => {
           </h2>
 
           <p className="text-base text-gray-400 leading-relaxed">
-            Kami menguji setiap strategi menggunakan data Every-Tick berbayar Tickstory kualitas 99.90% yang mencakup periode krisis ekonomi, pandemi, dan inflasi global 2015-2025.
+            Kami menguji setiap strategi menggunakan data historis berkualitas 99.90% dari Tickstory yang mencakup periode krisis ekonomi, pandemi, dan inflasi global 2015–2025.
           </p>
         </div>
 
@@ -39,7 +39,7 @@ export const BuktiBacktestSection = () => {
             <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/20 flex items-center justify-center text-[#10B981] mb-4">
               <Database className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">Tickstory 99.9% Everytick</h3>
+            <h3 className="text-lg font-bold text-white mb-2">Data Historis Tickstory 99.9%</h3>
             <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
               Bukan data 90% standar MT4 yang sering melompat. Kami menggunakan data spread riil dan eksekusi per milidetik untuk akurasi pengujian tertinggi.
             </p>
@@ -49,10 +49,21 @@ export const BuktiBacktestSection = () => {
             <div className="w-12 h-12 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 mb-4">
               <AlertCircle className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">Anti-Martingale & Strict SL</h3>
-            <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
-              Setiap posisi selalu diproteksi Stop Loss terukur 2% modal. Tidak pernah melipatgandakan lot (Martingale) saat floating minus.
+            <h3 className="text-lg font-bold text-white mb-2">Proteksi Modal & Strict SL</h3>
+            <p className="text-xs sm:text-sm text-gray-400 leading-relaxed mb-3.5">
+              Setiap posisi selalu diproteksi Stop Loss terukur maksimal 2% dari modal dengan eksekusi bersih:
             </p>
+            <div className="grid grid-cols-2 gap-2">
+              {['No Martingale', 'No Grid Trading', 'No Averaging', 'No Hedging'].map((rule) => (
+                <div
+                  key={rule}
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#06100C]/80 border border-[#1E382E] text-[11px] sm:text-xs font-semibold text-emerald-300"
+                >
+                  <CheckCircle className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
+                  <span>{rule}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="bg-[#0D1B16] border border-[#1E382E] rounded-2xl p-6 relative overflow-hidden group hover:border-[#10B981]/40 transition-colors">

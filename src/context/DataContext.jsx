@@ -26,8 +26,8 @@ export const DEFAULT_PRODUCTS = [
     targetProfit: '2-10%/bln',
     max_risk: '2% per trade',
     maxRisk: '2% per trade',
-    min_deposit: '$1,000',
-    minDeposit: '$1,000',
+    min_deposit: '$100',
+    minDeposit: '$100',
     platform: 'MT4 (M30)',
     features: [
       'XAUUSD Breakout Strategy (M30)',
