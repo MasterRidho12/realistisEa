@@ -121,38 +121,6 @@ export const HeroSection = () => {
                 />
               </div>
 
-              {/* Floating Card 1: Mini Equity Curve (Top-Left) */}
-              <div className="absolute -top-3 -left-2 sm:-left-6 z-20 bg-[#0D1B16]/90 backdrop-blur-md border border-[#1E382E] rounded-2xl p-3 shadow-[0_10px_25px_rgba(0,0,0,0.6)] animate-float-slow hover:border-[#10B981]/50 transition-all">
-                <div className="flex items-center justify-between gap-3 mb-1.5">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Equity Curve</span>
-                  <span className="inline-flex items-center text-[10px] font-bold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded">
-                    +420%
-                  </span>
-                </div>
-                {/* Vector SVG Line Chart */}
-                <svg className="w-32 h-10 overflow-visible" viewBox="0 0 120 40">
-                  <defs>
-                    <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#10B981" stopOpacity="0.4" />
-                      <stop offset="100%" stopColor="#10B981" stopOpacity="0.0" />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M 0 35 Q 20 32, 35 28 T 65 18 T 90 12 T 120 4 L 120 40 L 0 40 Z"
-                    fill="url(#equityGrad)"
-                  />
-                  <path
-                    d="M 0 35 Q 20 32, 35 28 T 65 18 T 90 12 T 120 4"
-                    fill="none"
-                    stroke="#10B981"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  />
-                  <circle cx="120" cy="4" r="3.5" fill="#10B981" className="animate-ping" />
-                  <circle cx="120" cy="4" r="3" fill="#FFFFFF" />
-                </svg>
-              </div>
-
               {/* Floating Card 2: Winrate & Drawdown (Bottom-Left) */}
               <div className="absolute -bottom-4 -left-2 sm:-left-4 z-20 bg-[#0D1B16]/95 backdrop-blur-md border border-[#1E382E] rounded-2xl px-4 py-2.5 shadow-[0_10px_30px_rgba(0,0,0,0.7)] animate-float-delay hover:border-[#10B981]/50 transition-all">
                 <div className="flex items-center gap-4 divide-x divide-[#1E382E]">

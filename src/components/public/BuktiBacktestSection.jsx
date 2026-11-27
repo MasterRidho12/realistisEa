@@ -24,7 +24,7 @@ export const BuktiBacktestSection = () => {
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold uppercase tracking-tight text-white mb-4">
-            BUKTI BACKTEST & AUDIT HISTORIS
+            BUKTI & AUDIT HISTORIS
           </h2>
 
           <p className="text-base text-gray-400 leading-relaxed">
