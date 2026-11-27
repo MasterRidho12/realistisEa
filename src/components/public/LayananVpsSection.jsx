@@ -8,7 +8,7 @@ export const LayananVpsSection = () => {
 
   const handleOrderVps = () => {
     trackWaClick('Layanan VPS');
-    const phone = settings.contact?.whatsappNumber || '6281234567890';
+    const phone = settings.contact?.whatsappNumber || '6287774229255';
     const text = `Halo Admin RealistisEA, saya ingin memesan Layanan VPS Trading 24/7 (${vps.price || 'Rp 1,2 jt / tahun'}). Mohon panduan aktivasi server dan setup akun MT4 saya.`;
     window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(text)}`, '_blank');
   };

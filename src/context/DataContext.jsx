@@ -4,7 +4,7 @@ import { supabase, supabaseConfigured } from '../lib/supabase';
 const DataContext = createContext();
 
 const AUTH_KEY = 'realistisea_admin_auth_v2';
-const STORAGE_KEY = 'realistisea_data_v3';
+const STORAGE_KEY = 'realistisea_data_v4';
 
 // ─── Default / Seed Data ────────────────────────────────────────────────────
 export const DEFAULT_PRODUCTS = [
@@ -161,7 +161,7 @@ export const DEFAULT_SETTINGS = {
     heroImage: '/images/hero-robot-clean.png',
   },
   contact: {
-    whatsappNumber: '6281234567890',
+    whatsappNumber: '6287774229255',
     waMessageTemplate: 'Halo Admin RealistisEA, saya tertarik untuk sewa {ea_name} dengan paket {price}. Mohon info aktivasi dan bantuan setup MT4.',
   },
   vps: {
@@ -462,7 +462,7 @@ export const DataProvider = ({ children }) => {
   };
 
   const getWhatsAppLink = (product = null) => {
-    const phone = settings.contact?.whatsappNumber || '6281234567890';
+    const phone = settings.contact?.whatsappNumber || '6287774229255';
     let text = settings.contact?.waMessageTemplate || 'Halo Admin RealistisEA, saya tertarik menyewa EA.';
     if (product) {
       text = text.replace('{ea_name}', product.name).replace('{price}', product.rentalPrice || product.rental_price || '');
